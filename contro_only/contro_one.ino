@@ -24,7 +24,10 @@ unsigned long INRUD;
 #define L 4
 #define R 5
 
-
+int Value0;
+int Value1;
+int Value2;
+int Value3;
 
 /*this array holds the servo values for the ppm signal
  change theese values in your code (usually servo values move between 1000 and 2000)*/
@@ -92,10 +95,11 @@ void loop(){
   }
   
   
-  ppm[0] = INAIL;
-  ppm[1] = INELE;
-  ppm[2] = INTHR;
-  ppm[3] = INRUD;
+  ppm[0] = Filter0();
+  ppm[1] = Filter1();
+  ppm[2] = Filter2();
+  ppm[3] = Filter3();
+
   
   
   
@@ -147,5 +151,68 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
   }
 }
 
+// 消抖滤波法
+#define FILTER_N 4
+int i = 0;
+int u = 0;
+int j = 0;
+int k = 0;
+int Filter0() {
+  int new_value;
+  new_value = INAIL;
+  if(Value0 != new_value) {
+    i++;
+    if(i > FILTER_N) {
+      i = 0;
+      Value0 = new_value;
+    }
+  }
+  else
+    i = 0;
+  return Value0;
+}
 
+int Filter1() {
+  int new_value;
+  new_value = INELE;
+  if(Value1 != new_value) {
+    u++;
+    if(u > FILTER_N) {
+      u = 0;
+      Value1 = new_value;
+    }
+  }
+  else
+    u = 0;
+  return Value1;
+}
 
+int Filter2() {
+  int new_value;
+  new_value = INTHR;
+  if(Value2 != new_value) {
+    j++;
+    if(j > FILTER_N) {
+      j = 0;
+      Value2 = new_value;
+    }
+  }
+  else
+    j = 0;
+  return Value2;
+}
+
+int Filter3() {
+  int new_value;
+  new_value = INRUD;
+  if(Value3 != new_value) {
+    k++;
+    if(k > FILTER_N) {
+      k = 0;
+      Value3 = new_value;
+    }
+  }
+  else
+    k = 0;
+  return Value3;
+}
